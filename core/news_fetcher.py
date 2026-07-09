@@ -1,3 +1,4 @@
+import random
 import xml.etree.ElementTree as ET
 
 import requests
@@ -50,6 +51,8 @@ class NewsFetcher:
 
         topics = []
 
+        seen = set()
+
         for item in root.findall(".//item"):
 
             title = item.findtext("title")
@@ -60,11 +63,19 @@ class NewsFetcher:
 
             title = title.split(" - ")[0].strip()
 
-            if title not in topics:
+            key = title.lower()
 
-                topics.append(title)
+            if key in seen:
 
-        logger.info(f"{len(topics)} topics found")
+                continue
+
+            seen.add(key)
+
+            topics.append(title)
+
+        random.shuffle(topics)
+
+        logger.info(f"{len(topics)} unique topics found")
 
         return topics
 
