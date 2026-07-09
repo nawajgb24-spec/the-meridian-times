@@ -1,8 +1,47 @@
 {
-    "branch": "main",
-    "homepage_limit": 30,
-    "hot_limit": 10,
-    "trending_limit": 30,
+  "project": {
+    "name": "The Meridian Times",
+    "version": "1.0.0",
+    "environment": "production"
+  },
+
+  "github": {
+    "branch": "main"
+  },
+
+  "website": {
+    "url": "https://themeridiantimes.com",
+    "language": "en",
+    "homepage_limit": 30
+  },
+
+  "publishing": {
+    "articles_per_run": 1,
     "max_articles": 500,
-    "default_category": "World"
+    "schedule_hours": 2
+  },
+
+  "content": {
+    "min_words": 900,
+    "max_words": 1300,
+    "summary_sentences": 2,
+    "duplicate_similarity": 85
+  },
+
+  "homepage": {
+    "hot_news_limit": 10,
+    "trending_limit": 30
+  },
+
+  "categories": [
+    "World",
+    "Trending News",
+    "Business",
+    "Stock News",
+    "Tech",
+    "Sports",
+    "Lifestyle",
+    "Anime",
+    "Food & Nutrition"
+  ]
 }
