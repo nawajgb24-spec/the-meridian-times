@@ -8,14 +8,16 @@ class ArticleFactory:
     def create(
         self,
         draft,
-        seo,
+        seo
     ):
+
+        slug = seo.slug.strip() if seo.slug else slugify(draft.title)
 
         article = Article(
 
             title=draft.title,
 
-            slug=seo.slug or slugify(draft.title),
+            slug=slug,
 
             category=draft.category,
 
