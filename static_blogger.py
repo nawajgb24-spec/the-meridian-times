@@ -3,25 +3,43 @@
 from core.logger import logger
 from core.config import config
 from core.news_fetcher import news_fetcher
+from core.deduplicator import deduplicator
+from core.research_engine import research
 
 
 def main():
 
-    logger.info("===================================")
-    logger.info("The Meridian Times Engine Started")
-    logger.info("===================================")
+    logger.info("=" * 60)
+    logger.info("THE MERIDIAN TIMES ENGINE STARTED")
+    logger.info("=" * 60)
 
-    categories = config.get("categories")
-
-    logger.info(f"Loaded {len(categories)} categories.")
+    categories = config.get("categories", default=[])
 
     for category in categories:
 
+        logger.info(f"Category: {category}")
+
         topics = news_fetcher.fetch(category)
 
-        logger.info(f"{category}: {len(topics)} topics")
+        for topic in topics:
 
-    logger.info("Engine Finished")
+            if deduplicator.exists(topic):
+
+                logger.info(f"Skipped: {topic}")
+
+                continue
+
+            logger.info(f"Researching: {topic}")
+
+            report = research.generate(topic)
+
+            logger.info(report[:300])
+
+            break
+
+    logger.info("=" * 60)
+    logger.info("ENGINE FINISHED")
+    logger.info("=" * 60)
 
 
 if __name__ == "__main__":
