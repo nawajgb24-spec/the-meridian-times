@@ -2,7 +2,11 @@ import re
 
 from core.gemini_client import gemini
 from core.prompt_loader import prompts
-from core.retry import retry
+from core.retry import (
+    retry,
+    DailyQuotaExceeded,
+    TemporaryRateLimit,
+)
 
 
 class GeminiEngine:
@@ -50,11 +54,17 @@ class GeminiEngine:
 
             return text
 
-        return retry.run(
-            function=request,
-            retries=3,
-            delay=30
-        )
+        try:
+
+            return retry.run(request)
+
+        except DailyQuotaExceeded:
+
+            raise
+
+        except TemporaryRateLimit:
+
+            raise
 
 
 engine = GeminiEngine()
