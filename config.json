@@ -1,0 +1,8 @@
+{
+    "branch": "main",
+    "homepage_limit": 30,
+    "hot_limit": 10,
+    "trending_limit": 30,
+    "max_articles": 500,
+    "default_category": "World"
+}
