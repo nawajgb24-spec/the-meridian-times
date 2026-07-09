@@ -1,3 +1,5 @@
+# Prompt Version: 1.0
+
 # The Meridian Times Research Engine
 
 ## ROLE
