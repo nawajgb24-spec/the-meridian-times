@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 
-import time
-
 from core.article_factory import article_factory
 from core.config import config
+from core.content_engine import content_engine
 from core.deduplicator import deduplicator
-from core.editor_engine import editor
-from core.journalist_engine import journalist
 from core.logger import logger
 from core.news_fetcher import news_fetcher
-from core.outline_engine import outline
 from core.publisher import publisher
-from core.research_engine import research
-from core.seo_engine import seo
 
 
 def main():
@@ -20,8 +14,6 @@ def main():
     logger.info("=" * 60)
     logger.info("THE MERIDIAN TIMES ENGINE STARTED")
     logger.info("=" * 60)
-
-    categories = config.get("categories", default=[])
 
     articles_per_run = config.get(
         "publishing",
@@ -31,72 +23,48 @@ def main():
 
     completed = 0
 
-    stop = False
-
-    for category in categories:
-
-        if stop:
-            break
+    for category in config.get("categories", default=[]):
 
         logger.info(f"Fetching {category}")
 
-        try:
-            topics = news_fetcher.fetch(category)
-        except Exception as e:
-            logger.exception(e)
-            continue
+        topics = news_fetcher.fetch(category)
 
         for topic in topics:
 
             if deduplicator.exists(topic):
                 continue
 
+            logger.info(f"Generating article: {topic}")
+
             try:
 
-                logger.info(f"Topic: {topic}")
+                package = content_engine.generate(topic)
 
-                research_report = research.generate(topic)
-                logger.info("✅ Research Complete")
+                article = article_factory.create_from_package(package)
 
-                outline_plan = outline.generate(research_report)
-                logger.info("✅ Outline Complete")
+                publisher.publish(article)
 
-                article = journalist.write(outline_plan)
-                logger.info("✅ Article Complete")
-
-                article = editor.edit(article)
-                logger.info("✅ Editor Complete")
-
-                seo_data = seo.generate(article)
-                logger.info("✅ SEO Complete")
-
-                final_article = article_factory.create(
-                    article,
-                    seo_data
-                )
-
-                publisher.publish(final_article)
-
-                logger.info("✅ Published")
-
-                logger.info("=" * 60)
-                logger.info(final_article.title)
-                logger.info("=" * 60)
+                logger.info(f"✅ Published: {article.title}")
 
                 completed += 1
 
                 if completed >= articles_per_run:
-                    stop = True
-                    break
 
-                time.sleep(60)
+                    logger.info("Daily limit reached.")
+
+                    logger.info("=" * 60)
+                    logger.info("ENGINE FINISHED")
+                    logger.info("=" * 60)
+
+                    return
 
             except Exception as e:
+
                 logger.exception(e)
-                break
+
+                continue
 
     logger.info("=" * 60)
-    logger.info(f"Generated Articles: {completed}")
     logger.info("ENGINE FINISHED")
     logger.info("=" * 60)
 
