@@ -1,51 +1,48 @@
 from core.article import Article
-from core.slugify import slugify
-from core.text_utils import word_count, reading_time
 
 
 class ArticleFactory:
 
-    def create(
-        self,
-        draft,
-        seo
-    ):
+    def create_from_package(self, package: dict):
 
-        slug = seo.slug.strip() if seo.slug else slugify(draft.title)
+        article = package["article"]
 
-        article = Article(
+        seo = package["seo"]
 
-            title=draft.title,
+        research = package["research"]
 
-            slug=slug,
+        return Article(
 
-            category=draft.category,
+            title=article["title"],
 
-            summary=draft.summary,
+            slug=seo["slug"],
 
-            content=draft.content,
+            category=article["category"],
 
-            featured_image=draft.featured_image,
+            summary=article["summary"],
 
-            tags=seo.tags,
+            content=article["content"],
 
-            keywords=seo.secondary_keywords,
+            featured_image="",
 
-            seo_title=seo.seo_title,
+            tags=seo.get("tags", []),
 
-            seo_description=seo.meta_description
+            keywords=research.get("keywords", []),
+
+            source_links=research.get("source_links", []),
+
+            seo_title=seo["seo_title"],
+
+            seo_description=seo["meta_description"],
+
+            word_count=len(article["content"].split()),
+
+            reading_time=max(
+                1,
+                len(article["content"].split()) // 200
+            )
 
         )
-
-        article.word_count = word_count(
-            draft.content
-        )
-
-        article.reading_time = reading_time(
-            draft.content
-        )
-
-        return article
 
 
 article_factory = ArticleFactory()
