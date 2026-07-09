@@ -12,7 +12,7 @@ class OutlineEngine:
 
             {
 
-                "RESEARCH": research_report.summary
+                "RESEARCH": research_report.to_dict()
 
             }
 
