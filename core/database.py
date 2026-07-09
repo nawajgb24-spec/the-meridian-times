@@ -17,7 +17,9 @@ class Database:
         if not ARTICLES_FILE.exists():
 
             self.data = {
+
                 "articles": []
+
             }
 
             return
@@ -45,22 +47,21 @@ class Database:
                 ensure_ascii=False
             )
 
-    def articles(self):
-
-        return self.data["articles"]
-
     def add(self, article):
 
-        self.data["articles"].insert(
-            0,
+        self.data["articles"].append(
             article.to_dict()
         )
 
         self.save()
 
         logger.info(
-            f"Article saved: {article.title}"
+            f"Saved article: {article.title}"
         )
+
+    def articles(self):
+
+        return self.data["articles"]
 
 
 database = Database()
