@@ -4,9 +4,13 @@ import time
 
 from core.config import config
 from core.deduplicator import deduplicator
+from core.editor_engine import editor
+from core.journalist_engine import journalist
 from core.logger import logger
 from core.news_fetcher import news_fetcher
+from core.outline_engine import outline
 from core.research_engine import research
+from core.seo_engine import seo
 
 
 def main():
@@ -23,58 +27,58 @@ def main():
         default=1
     )
 
-    published = 0
+    completed = 0
 
     for category in categories:
 
-        if published >= articles_per_run:
+        if completed >= articles_per_run:
             break
 
-        logger.info(f"Category: {category}")
-
-        try:
-
-            topics = news_fetcher.fetch(category)
-
-        except Exception as e:
-
-            logger.exception(e)
-
-            continue
+        topics = news_fetcher.fetch(category)
 
         for topic in topics:
 
-            if published >= articles_per_run:
+            if completed >= articles_per_run:
                 break
 
             if deduplicator.exists(topic):
-
-                logger.info(f"Duplicate skipped: {topic}")
-
                 continue
 
-            logger.info(f"Researching: {topic}")
+            logger.info(f"Topic: {topic}")
 
             try:
 
-                report = research.generate(topic)
+                research_report = research.generate(topic)
 
-                logger.info(report[:500])
+                logger.info("✅ Research Complete")
 
-                published += 1
+                outline_plan = outline.generate(research_report)
 
-                logger.info(
-                    f"Completed {published}/{articles_per_run}"
-                )
+                logger.info("✅ Outline Complete")
 
-                # Free Gemini Tier Safety
+                article = journalist.write(outline_plan)
+
+                logger.info("✅ Article Complete")
+
+                article = editor.edit(article)
+
+                logger.info("✅ Editor Complete")
+
+                seo_data = seo.generate(article)
+
+                logger.info("✅ SEO Complete")
+
+                logger.info("=" * 60)
+                logger.info(article.title)
+                logger.info("=" * 60)
+
+                completed += 1
+
                 time.sleep(50)
 
             except Exception as e:
 
                 logger.exception(e)
-
-                continue
 
             break
 
@@ -84,5 +88,4 @@ def main():
 
 
 if __name__ == "__main__":
-
     main()
