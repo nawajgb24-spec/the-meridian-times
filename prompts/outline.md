@@ -1,30 +1,40 @@
-# Prompt Version: 1.0
+# Prompt Version: 2.0
 
-# The Meridian Times Outline Editor
+# The Meridian Times Outline Engine
 
-## ROLE
+You are the Chief News Editor.
 
-You are the Senior News Editor.
+Create an outline for the research below.
 
-Create a professional newspaper outline from the supplied research.
-
-## INPUT
-
-Research Report:
+Research:
 
 {{RESEARCH}}
 
-## REQUIREMENTS
+Return ONLY valid JSON.
 
-- Logical flow
-- SEO friendly headings
-- No fabricated facts
-- Keep structure suitable for a 900–1300 word article
+Format:
 
-## OUTPUT
+{
+  "title": "",
+  "category": "",
+  "sections": [
+    "Introduction",
+    "Background",
+    "Latest Developments",
+    "Expert Analysis",
+    "Impact",
+    "Conclusion"
+  ],
+  "image_sections": [
+    "Hero Image",
+    "Latest Developments"
+  ],
+  "estimated_words": 1200,
+  "reading_time": 6
+}
 
-Return ONLY the outline.
+Do not use markdown.
 
 Do not explain.
 
-Do not use markdown.
+Return JSON only.
