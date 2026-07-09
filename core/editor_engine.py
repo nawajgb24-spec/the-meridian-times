@@ -3,14 +3,23 @@ from core.gemini_engine import engine
 
 class EditorEngine:
 
-    def edit(self, article: str):
+    def edit(self, article):
 
-        return engine.generate(
+        response = engine.generate(
+
             "editor",
+
             {
-                "ARTICLE": article
+
+                "ARTICLE": article.content
+
             }
+
         )
+
+        article.content = response
+
+        return article
 
 
 editor = EditorEngine()
