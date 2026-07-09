@@ -1,3 +1,4 @@
+import random
 import time
 
 from google.genai.errors import ClientError
@@ -21,15 +22,15 @@ class Retry:
 
         function,
 
-        retries=3,
-
-        delay=30
+        delays=(10, 20, 40, 80)
 
     ):
 
         last_error = None
 
-        for attempt in range(1, retries + 1):
+        retries = len(delays) + 1
+
+        for attempt in range(retries):
 
             try:
 
@@ -37,9 +38,9 @@ class Retry:
 
             except ClientError as e:
 
-                message = str(e)
-
                 last_error = e
+
+                message = str(e)
 
                 logger.warning(message)
 
@@ -48,7 +49,7 @@ class Retry:
 
                     raise DailyQuotaExceeded()
 
-                # Temporary quota
+                # Temporary quota / rate limit
                 if (
 
                     "RESOURCE_EXHAUSTED" in message
@@ -57,21 +58,51 @@ class Retry:
 
                 ):
 
-                    if attempt == retries:
+                    if attempt >= len(delays):
 
                         raise TemporaryRateLimit()
 
+                    delay = delays[attempt]
+
+                    jitter = random.randint(0, 5)
+
+                    total = delay + jitter
+
                     logger.info(
 
-                        f"Retrying in {delay} seconds..."
+                        f"Retrying after {total} seconds..."
 
                     )
 
-                    time.sleep(delay)
+                    time.sleep(total)
 
                     continue
 
                 raise
+
+            except Exception as e:
+
+                last_error = e
+
+                if attempt >= len(delays):
+
+                    raise
+
+                delay = delays[attempt]
+
+                jitter = random.randint(0, 5)
+
+                total = delay + jitter
+
+                logger.warning(str(e))
+
+                logger.info(
+
+                    f"Retrying after {total} seconds..."
+
+                )
+
+                time.sleep(total)
 
         raise last_error
 
