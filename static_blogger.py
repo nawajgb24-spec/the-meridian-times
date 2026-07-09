@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import random
+
 from core.article_factory import article_factory
 from core.config import config
 from core.content_engine import content_engine
@@ -15,61 +17,68 @@ def main():
     logger.info("THE MERIDIAN TIMES ENGINE STARTED")
     logger.info("=" * 60)
 
-    articles_per_run = config.get(
-        "publishing",
-        "articles_per_run",
-        default=1
-    )
-
-    completed = 0
+    all_topics = []
+    seen = set()
 
     for category in config.get("categories", default=[]):
 
-        logger.info(f"Category: {category}")
+        logger.info(f"Collecting topics: {category}")
 
-        topics = news_fetcher.fetch(category)
+        try:
+
+            topics = news_fetcher.fetch(category)
+
+        except Exception as e:
+
+            logger.exception(e)
+
+            continue
 
         for topic in topics:
 
-            if deduplicator.exists(topic):
+            key = topic.strip().lower()
+
+            if key in seen:
+
                 continue
 
-            logger.info(f"Generating: {topic}")
+            seen.add(key)
 
-            try:
+            all_topics.append(topic)
 
-                package = content_engine.generate(topic)
+    random.shuffle(all_topics)
 
-                article = article_factory.create_from_package(
-                    package
-                )
+    logger.info(f"Collected {len(all_topics)} unique topics")
 
-                publisher.publish(article)
+    for topic in all_topics:
 
-                logger.info(
-                    f"Published: {article.title}"
-                )
+        if deduplicator.exists(topic):
 
-                completed += 1
+            continue
 
-                if completed >= articles_per_run:
+        logger.info(f"Selected Topic: {topic}")
 
-                    logger.info(
-                        "Daily limit reached."
-                    )
+        try:
 
-                    logger.info("=" * 60)
-                    logger.info("ENGINE FINISHED")
-                    logger.info("=" * 60)
+            package = content_engine.generate(topic)
 
-                    return
+            article = article_factory.create_from_package(package)
 
-            except Exception as e:
+            publisher.publish(article)
 
-                logger.exception(e)
+            logger.info(f"Published: {article.title}")
 
-                break
+            logger.info("=" * 60)
+            logger.info("ENGINE FINISHED")
+            logger.info("=" * 60)
 
+            return
+
+        except Exception as e:
+
+            logger.exception(e)
+
+    logger.info("No article published.")
     logger.info("=" * 60)
     logger.info("ENGINE FINISHED")
     logger.info("=" * 60)
