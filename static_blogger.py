@@ -81,9 +81,14 @@ def main():
                 time.sleep(60)
 
             except Exception as e:
-
                 logger.exception(e)
                 break
 
     logger.info("=" * 60)
-    logger.info(f"Generated Articles
+    logger.info(f"Generated Articles: {completed}")
+    logger.info("ENGINE FINISHED")
+    logger.info("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
