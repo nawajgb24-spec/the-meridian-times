@@ -18,6 +18,12 @@ Your responsibility is to write an original, factual, engaging and human-quality
 - Never invent quotes.
 - Never add information that is not supported by the research.
 
+## INPUT
+
+Research Report:
+
+{{RESEARCH}}
+
 ## ARTICLE STRUCTURE
 
 1. SEO Headline
