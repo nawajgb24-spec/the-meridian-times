@@ -30,11 +30,34 @@ class Retry:
 
         retries = len(delays) + 1
 
+        start_time = time.time()
+
+        logger.info("=" * 60)
+        logger.info("RETRY ENGINE STARTED")
+        logger.info("=" * 60)
+
         for attempt in range(retries):
 
             try:
 
-                return function()
+                logger.info(
+                    f"Attempt {attempt + 1}/{retries}"
+                )
+
+                result = function()
+
+                elapsed = round(
+                    time.time() - start_time,
+                    2
+                )
+
+                logger.info(
+                    f"Retry Engine Success ({elapsed}s)"
+                )
+
+                logger.info("=" * 60)
+
+                return result
 
             except ClientError as e:
 
@@ -44,12 +67,14 @@ class Retry:
 
                 logger.warning(message)
 
-                # Daily quota exhausted
                 if "GenerateRequestsPerDay" in message:
+
+                    logger.error(
+                        "Daily quota exhausted."
+                    )
 
                     raise DailyQuotaExceeded()
 
-                # Temporary quota / rate limit
                 if (
 
                     "RESOURCE_EXHAUSTED" in message
@@ -60,6 +85,10 @@ class Retry:
 
                     if attempt >= len(delays):
 
+                        logger.error(
+                            "Retry limit reached."
+                        )
+
                         raise TemporaryRateLimit()
 
                     delay = delays[attempt]
@@ -69,9 +98,7 @@ class Retry:
                     total = delay + jitter
 
                     logger.info(
-
-                        f"Retrying after {total} seconds..."
-
+                        f"Waiting {total} seconds..."
                     )
 
                     time.sleep(total)
@@ -84,7 +111,13 @@ class Retry:
 
                 last_error = e
 
+                logger.warning(str(e))
+
                 if attempt >= len(delays):
+
+                    logger.error(
+                        "Retry limit reached."
+                    )
 
                     raise
 
@@ -94,15 +127,22 @@ class Retry:
 
                 total = delay + jitter
 
-                logger.warning(str(e))
-
                 logger.info(
-
-                    f"Retrying after {total} seconds..."
-
+                    f"Waiting {total} seconds..."
                 )
 
                 time.sleep(total)
+
+        elapsed = round(
+            time.time() - start_time,
+            2
+        )
+
+        logger.error(
+            f"Retry Engine Failed ({elapsed}s)"
+        )
+
+        logger.info("=" * 60)
 
         raise last_error
 
