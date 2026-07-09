@@ -2,6 +2,7 @@
 
 import time
 
+from core.article_factory import article_factory
 from core.config import config
 from core.deduplicator import deduplicator
 from core.editor_engine import editor
@@ -9,10 +10,9 @@ from core.journalist_engine import journalist
 from core.logger import logger
 from core.news_fetcher import news_fetcher
 from core.outline_engine import outline
+from core.publisher import publisher
 from core.research_engine import research
 from core.seo_engine import seo
-from core.article_factory import article_factory
-from core.publisher import publisher
 
 
 def main():
@@ -69,18 +69,18 @@ def main():
 
                 seo_data = seo.generate(article)
                 logger.info("✅ SEO Complete")
-                
+
                 final_article = article_factory.create(
-    article,
-    seo_data
-)
+                    article,
+                    seo_data
+                )
 
-publisher.publish(final_article)
+                publisher.publish(final_article)
 
-logger.info("✅ Published")
+                logger.info("✅ Published")
 
                 logger.info("=" * 60)
-                logger.info(article.title)
+                logger.info(final_article.title)
                 logger.info("=" * 60)
 
                 completed += 1
