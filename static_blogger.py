@@ -6,6 +6,7 @@ from core.article_factory import article_factory
 from core.config import config
 from core.content_engine import content_engine
 from core.deduplicator import deduplicator
+from core.health_check import health_check
 from core.logger import logger
 from core.news_fetcher import news_fetcher
 from core.publisher import publisher
@@ -20,6 +21,17 @@ def main():
     logger.info("=" * 60)
     logger.info("THE MERIDIAN TIMES ENGINE STARTED")
     logger.info("=" * 60)
+
+    # Health Check
+    if not health_check.run():
+
+        logger.error("Startup health check failed.")
+
+        logger.info("=" * 60)
+        logger.info("ENGINE STOPPED")
+        logger.info("=" * 60)
+
+        return
 
     all_topics = []
     seen = set()
