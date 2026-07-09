@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import json
-
+from core.article_factory import article_factory
 from core.config import config
 from core.content_engine import content_engine
 from core.deduplicator import deduplicator
 from core.logger import logger
 from core.news_fetcher import news_fetcher
+from core.publisher import publisher
 
 
 def main():
@@ -15,9 +15,15 @@ def main():
     logger.info("THE MERIDIAN TIMES ENGINE STARTED")
     logger.info("=" * 60)
 
-    categories = config.get("categories", default=[])
+    articles_per_run = config.get(
+        "publishing",
+        "articles_per_run",
+        default=1
+    )
 
-    for category in categories:
+    completed = 0
+
+    for category in config.get("categories", default=[]):
 
         logger.info(f"Category: {category}")
 
@@ -28,25 +34,45 @@ def main():
             if deduplicator.exists(topic):
                 continue
 
-            logger.info(f"Generating package for: {topic}")
+            logger.info(f"Generating: {topic}")
 
-            package = content_engine.generate(topic)
+            try:
 
-            logger.info("=" * 60)
-            logger.info("UNIFIED PACKAGE RECEIVED")
-            logger.info("=" * 60)
+                package = content_engine.generate(topic)
 
-            print(
-                json.dumps(
-                    package,
-                    indent=4,
-                    ensure_ascii=False
+                article = article_factory.create_from_package(
+                    package
                 )
-            )
 
-            return
+                publisher.publish(article)
 
-    logger.info("No topic available.")
+                logger.info(
+                    f"Published: {article.title}"
+                )
+
+                completed += 1
+
+                if completed >= articles_per_run:
+
+                    logger.info(
+                        "Daily limit reached."
+                    )
+
+                    logger.info("=" * 60)
+                    logger.info("ENGINE FINISHED")
+                    logger.info("=" * 60)
+
+                    return
+
+            except Exception as e:
+
+                logger.exception(e)
+
+                break
+
+    logger.info("=" * 60)
+    logger.info("ENGINE FINISHED")
+    logger.info("=" * 60)
 
 
 if __name__ == "__main__":
