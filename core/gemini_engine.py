@@ -1,4 +1,4 @@
-import json
+import re
 
 from core.gemini_client import gemini
 from core.prompt_loader import prompts
@@ -26,7 +26,26 @@ class GeminiEngine:
             contents=prompt
         )
 
-        return response.text.strip()
+        text = response.text.strip()
+
+        if text.startswith("```"):
+
+            text = re.sub(
+                r"^```(?:json)?",
+                "",
+                text,
+                flags=re.IGNORECASE
+            )
+
+            text = re.sub(
+                r"```$",
+                "",
+                text
+            )
+
+            text = text.strip()
+
+        return text
 
 
 engine = GeminiEngine()
