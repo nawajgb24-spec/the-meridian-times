@@ -1,4 +1,5 @@
 from core.database import database
+from core.html_builder import html_builder
 from core.logger import logger
 
 
@@ -6,11 +7,9 @@ class Publisher:
 
     def publish(self, article):
 
-        articles = database.articles()
+        database.add(article)
 
-        articles.insert(0, article.to_dict())
-
-        database.save()
+        html_builder.build(article)
 
         logger.info(
             f"Published: {article.title}"
