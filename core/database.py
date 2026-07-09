@@ -49,5 +49,18 @@ class Database:
 
         return self.data["articles"]
 
+    def add(self, article):
+
+        self.data["articles"].insert(
+            0,
+            article.to_dict()
+        )
+
+        self.save()
+
+        logger.info(
+            f"Article saved: {article.title}"
+        )
+
 
 database = Database()
