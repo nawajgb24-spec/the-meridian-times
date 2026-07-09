@@ -2,6 +2,7 @@ import re
 
 from core.gemini_client import gemini
 from core.prompt_loader import prompts
+from core.retry import retry
 
 
 class GeminiEngine:
@@ -21,31 +22,39 @@ class GeminiEngine:
                 str(value)
             )
 
-        response = gemini.client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
+        def request():
+
+            response = gemini.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+            )
+
+            text = response.text.strip()
+
+            if text.startswith("```"):
+
+                text = re.sub(
+                    r"^```(?:json)?",
+                    "",
+                    text,
+                    flags=re.IGNORECASE
+                )
+
+                text = re.sub(
+                    r"```$",
+                    "",
+                    text
+                )
+
+                text = text.strip()
+
+            return text
+
+        return retry.run(
+            function=request,
+            retries=3,
+            delay=30
         )
-
-        text = response.text.strip()
-
-        if text.startswith("```"):
-
-            text = re.sub(
-                r"^```(?:json)?",
-                "",
-                text,
-                flags=re.IGNORECASE
-            )
-
-            text = re.sub(
-                r"```$",
-                "",
-                text
-            )
-
-            text = text.strip()
-
-        return text
 
 
 engine = GeminiEngine()
