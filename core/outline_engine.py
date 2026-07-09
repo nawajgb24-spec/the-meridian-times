@@ -1,16 +1,24 @@
 from core.gemini_engine import engine
+from core.parser import parser
 
 
 class OutlineEngine:
 
-    def generate(self, research: str):
+    def generate(self, research_report):
 
-        return engine.generate(
+        response = engine.generate(
+
             "outline",
+
             {
-                "RESEARCH": research
+
+                "RESEARCH": research_report.summary
+
             }
+
         )
+
+        return parser.outline(response)
 
 
 outline = OutlineEngine()
