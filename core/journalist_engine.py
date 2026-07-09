@@ -1,16 +1,24 @@
 from core.gemini_engine import engine
+from core.parser import parser
 
 
 class JournalistEngine:
 
-    def write(self, research: str):
+    def write(self, outline_plan):
 
-        return engine.generate(
+        response = engine.generate(
+
             "journalist",
+
             {
-                "RESEARCH": research
+
+                "RESEARCH": "\n".join(outline_plan.sections)
+
             }
+
         )
+
+        return parser.article(response)
 
 
 journalist = JournalistEngine()
