@@ -29,43 +29,43 @@ def main():
 
     completed = 0
 
+    stop = False
+
     for category in categories:
 
-        if completed >= articles_per_run:
+        if stop:
             break
 
-        topics = news_fetcher.fetch(category)
+        logger.info(f"Fetching {category}")
+
+        try:
+            topics = news_fetcher.fetch(category)
+        except Exception as e:
+            logger.exception(e)
+            continue
 
         for topic in topics:
-
-            if completed >= articles_per_run:
-                break
 
             if deduplicator.exists(topic):
                 continue
 
-            logger.info(f"Topic: {topic}")
-
             try:
 
-                research_report = research.generate(topic)
+                logger.info(f"Topic: {topic}")
 
+                research_report = research.generate(topic)
                 logger.info("✅ Research Complete")
 
                 outline_plan = outline.generate(research_report)
-
                 logger.info("✅ Outline Complete")
 
                 article = journalist.write(outline_plan)
-
                 logger.info("✅ Article Complete")
 
                 article = editor.edit(article)
-
                 logger.info("✅ Editor Complete")
 
                 seo_data = seo.generate(article)
-
                 logger.info("✅ SEO Complete")
 
                 logger.info("=" * 60)
@@ -74,18 +74,16 @@ def main():
 
                 completed += 1
 
-                time.sleep(50)
+                if completed >= articles_per_run:
+                    stop = True
+                    break
+
+                time.sleep(60)
 
             except Exception as e:
 
                 logger.exception(e)
-
-            break
+                break
 
     logger.info("=" * 60)
-    logger.info("ENGINE FINISHED")
-    logger.info("=" * 60)
-
-
-if __name__ == "__main__":
-    main()
+    logger.info(f"Generated Articles
