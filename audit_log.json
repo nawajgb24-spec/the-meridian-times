@@ -194,6 +194,16 @@
             "timestamp": "2026-07-10T17:19:17.805425",
             "status": "daily_quota_exhausted",
             "reason": "Gemini daily quota exhausted."
+        },
+        {
+            "timestamp": "2026-07-10T17:34:38.928563",
+            "status": "publish_failed",
+            "reason": "Expecting ',' delimiter: line 68 column 5 (char 12009)"
+        },
+        {
+            "timestamp": "2026-07-10T17:34:39.065979",
+            "status": "daily_quota_exhausted",
+            "reason": "Gemini daily quota exhausted."
         }
     ]
 }
