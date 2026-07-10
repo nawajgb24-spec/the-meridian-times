@@ -189,6 +189,11 @@
             "category": "Business & Finance",
             "word_count": 1185,
             "reading_time": 6
+        },
+        {
+            "timestamp": "2026-07-10T17:19:17.805425",
+            "status": "daily_quota_exhausted",
+            "reason": "Gemini daily quota exhausted."
         }
     ]
 }
