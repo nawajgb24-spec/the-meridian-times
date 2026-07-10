@@ -3,6 +3,7 @@ from core.database import database
 from core.homepage_builder import homepage_builder
 from core.html_builder import html_builder
 from core.image_generator import image_generator
+from core.trending_engine import trending_engine
 
 
 class Publisher:
@@ -16,6 +17,12 @@ class Publisher:
         article.featured_image = image_info[
             "filename"
         ]
+
+        article.trending_score = (
+            trending_engine.score(
+                article
+            )
+        )
 
         database.add(article)
 
