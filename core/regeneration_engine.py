@@ -4,33 +4,48 @@ from core.parser import parser
 
 class RegenerationEngine:
 
-    def expand(self, package):
+    def improve(
 
-        article = package["article"]
-        seo = package["seo"]
+        self,
+
+        package,
+
+        reason: str
+
+    ):
 
         prompt = f"""
-You are a professional newspaper editor.
+You are the Editor-in-Chief of The Meridian Times.
 
-Expand the following news article.
+The previous article failed validation.
 
-Rules:
+Validation Failure:
 
-- Keep every fact accurate.
-- Do NOT invent information.
-- Preserve the original structure.
-- Expand every section naturally.
-- Target 1000-1200 words.
-- Return ONLY valid JSON.
-- Keep the existing SEO.
+{reason}
 
-ARTICLE JSON:
+Your task:
 
-{article}
+1. Fix every issue.
 
-SEO JSON:
+2. Keep every verified fact.
 
-{seo}
+3. Never invent information.
+
+4. Improve readability.
+
+5. Improve SEO.
+
+6. Improve structure.
+
+7. Remove duplicated content.
+
+8. Ensure 1000-1200 words.
+
+9. Return EXACTLY the same JSON structure.
+
+Previous JSON:
+
+{package}
 """
 
         response = engine.generate(
