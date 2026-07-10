@@ -1,3 +1,4 @@
+from core.health_check import health_check
 from core.logger import logger
 
 
@@ -9,7 +10,12 @@ class ProductionPipeline:
         logger.info("PRODUCTION PIPELINE STARTED")
         logger.info("=" * 60)
 
-        self.health_check()
+        if not self.health_check():
+
+            logger.info("=" * 60)
+            logger.info("PIPELINE STOPPED")
+            logger.info("=" * 60)
+            return
 
         self.collect_topics()
 
@@ -21,7 +27,9 @@ class ProductionPipeline:
 
     def health_check(self):
 
-        pass
+        logger.info("Running Health Check...")
+
+        return health_check.run()
 
     def collect_topics(self):
 
