@@ -139,6 +139,16 @@
             "category": "Environmental News",
             "word_count": 1157,
             "reading_time": 6
+        },
+        {
+            "timestamp": "2026-07-10T16:01:38.920562",
+            "status": "published",
+            "reason": "",
+            "title": "FIFA Offers Piece of History: World Cup Final Pitch Segments Go on Sale",
+            "slug": "fifa-world-cup-final-pitch-pieces-sale",
+            "category": "Sports News",
+            "word_count": 1137,
+            "reading_time": 6
         }
     ]
 }
