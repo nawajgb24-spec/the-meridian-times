@@ -1,3 +1,5 @@
+from math import ceil
+
 from core.logger import logger
 
 
@@ -17,6 +19,8 @@ class Validator:
 
         self._validate_required_fields(article)
 
+        self._auto_fix(article)
+
         self._validate_word_count(article)
 
         self._validate_seo(article)
@@ -29,6 +33,29 @@ class Validator:
         logger.info("=" * 60)
 
         return True
+
+    def _auto_fix(self, article):
+
+        words = len(article.content.split())
+
+        if article.word_count <= 0:
+
+            article.word_count = words
+
+            logger.info(
+                f"Auto word count: {words}"
+            )
+
+        if article.reading_time <= 0:
+
+            article.reading_time = max(
+                1,
+                ceil(words / 200)
+            )
+
+            logger.info(
+                f"Auto reading time: {article.reading_time}"
+            )
 
     def _validate_required_fields(self, article):
 
@@ -48,17 +75,17 @@ class Validator:
 
             if not str(value).strip():
 
-                raise ValidationError(f"{name} is empty.")
+                raise ValidationError(
+                    f"{name} is empty."
+                )
 
     def _validate_word_count(self, article):
 
-        words = len(article.content.split())
-
-        if words < self.MIN_WORDS:
+        if article.word_count < self.MIN_WORDS:
 
             raise ValidationError(
 
-                f"Content too short ({words} words)."
+                f"Content too short ({article.word_count} words)."
 
             )
 
@@ -67,17 +94,13 @@ class Validator:
         if not article.seo_title.strip():
 
             raise ValidationError(
-
                 "SEO title missing."
-
             )
 
         if not article.seo_description.strip():
 
             raise ValidationError(
-
                 "SEO description missing."
-
             )
 
     def _validate_tags(self, article):
@@ -85,17 +108,13 @@ class Validator:
         if not article.tags:
 
             raise ValidationError(
-
                 "Tags missing."
-
             )
 
         if len(article.tags) < 3:
 
             raise ValidationError(
-
                 "Minimum 3 tags required."
-
             )
 
     def _validate_reading_time(self, article):
@@ -103,9 +122,7 @@ class Validator:
         if article.reading_time <= 0:
 
             raise ValidationError(
-
                 "Invalid reading time."
-
             )
 
 
