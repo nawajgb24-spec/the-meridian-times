@@ -21,6 +21,8 @@ class ArticleDraft:
 
     keywords: list[str] = field(default_factory=list)
 
+    source_links: list[str] = field(default_factory=list)
+
     word_count: int = 0
 
     reading_time: int = 0
@@ -48,6 +50,8 @@ class ArticleDraft:
             "tags": self.tags,
 
             "keywords": self.keywords,
+
+            "source_links": self.source_links,
 
             "word_count": self.word_count,
 
