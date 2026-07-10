@@ -31,12 +31,6 @@ jobs:
             pip install -r requirements.txt
           fi
 
-      - name: Test Gemini Image API
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          python test_image_api.py
-
       - name: Run News Engine
         env:
           PYTHONUNBUFFERED: "1"
