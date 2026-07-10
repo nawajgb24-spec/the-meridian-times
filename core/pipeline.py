@@ -15,14 +15,13 @@ from core.validator import (
 
 class ProductionPipeline:
 
+    MAX_REGENERATION_ATTEMPTS = 1
+
     def __init__(self):
 
         self.topics = []
-
         self.selected_topic = None
-
         self.package = None
-
         self.article = None
 
     def run(self):
@@ -33,9 +32,7 @@ class ProductionPipeline:
 
         if not health_check.run():
 
-            logger.error(
-                "Health Check Failed."
-            )
+            logger.error("Health Check Failed.")
 
             self.finish()
 
@@ -45,27 +42,19 @@ class ProductionPipeline:
 
         if not self.topics:
 
-            logger.warning(
-                "No topics collected."
-            )
+            logger.warning("No topics collected.")
 
             self.finish()
 
             return
 
-        published = False
-
         for topic in self.topics:
 
-            published = self.process_topic(
-                topic
-            )
-
-            if published:
+            if self.process_topic(topic):
 
                 break
 
-        if not published:
+        else:
 
             logger.warning(
                 "No article could be published."
@@ -75,13 +64,11 @@ class ProductionPipeline:
 
     def collect_topics(self):
 
-        logger.info(
-            "Collecting Topics..."
-        )
-
-        seen = set()
+        logger.info("Collecting Topics...")
 
         self.topics.clear()
+
+        seen = set()
 
         for category in config.get(
             "categories",
@@ -114,14 +101,10 @@ class ProductionPipeline:
 
                 seen.add(key)
 
-                self.topics.append(
-                    topic
-                )
+                self.topics.append(topic)
 
         logger.info(
-
             f"{len(self.topics)} unique topics collected."
-
         )
 
     def process_topic(self, topic):
@@ -131,17 +114,13 @@ class ProductionPipeline:
         if deduplicator.exists(topic):
 
             logger.info(
-
                 f"Duplicate skipped: {topic}"
-
             )
 
             return False
 
         logger.info(
-
             f"Processing: {topic}"
-
         )
 
         try:
@@ -156,31 +135,13 @@ class ProductionPipeline:
 
             return False
 
-        self.article = article_factory.create_from_package(
-            self.package
-        )
+        for attempt in range(
 
-        try:
+            self.MAX_REGENERATION_ATTEMPTS + 1
 
-            validator.validate(
-                self.article
-            )
-
-        except ValidationError as e:
-
-            logger.warning(
-                f"Validation failed: {e}"
-            )
-
-            logger.info(
-                "Attempting regeneration..."
-            )
+        ):
 
             try:
-
-                self.package = regeneration_engine.expand(
-                    self.package
-                )
 
                 self.article = article_factory.create_from_package(
                     self.package
@@ -190,23 +151,56 @@ class ProductionPipeline:
                     self.article
                 )
 
-            except Exception as regen_error:
-
-                logger.error(
-                    f"Regeneration failed: {regen_error}"
+                publisher.publish(
+                    self.article
                 )
+
+                logger.info(
+                    f"Published: {self.article.title}"
+                )
+
+                return True
+
+            except ValidationError as e:
+
+                logger.warning(
+                    f"Validation failed: {e}"
+                )
+
+                if attempt >= self.MAX_REGENERATION_ATTEMPTS:
+
+                    logger.error(
+                        "Maximum regeneration attempts reached."
+                    )
+
+                    return False
+
+                logger.info(
+                    "Running self-healing regeneration..."
+                )
+
+                try:
+
+                    self.package = regeneration_engine.improve(
+                        self.package,
+                        str(e)
+                    )
+
+                except Exception as regen_error:
+
+                    logger.exception(
+                        regen_error
+                    )
+
+                    return False
+
+            except Exception as e:
+
+                logger.exception(e)
 
                 return False
 
-        publisher.publish(
-            self.article
-        )
-
-        logger.info(
-            f"Published: {self.article.title}"
-        )
-
-        return True
+        return False
 
     def finish(self):
 
