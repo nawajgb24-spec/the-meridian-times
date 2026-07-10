@@ -9,38 +9,100 @@ class InternalLinker:
     def build(self, article):
 
         logger.info("=" * 60)
-        logger.info("INTERNAL LINK ENGINE")
+        logger.info("SMART INTERNAL LINK ENGINE")
         logger.info("=" * 60)
 
-        links = []
-
         current_slug = article.slug.lower()
+
+        article_keywords = {
+            k.lower().strip()
+            for k in article.keywords
+            if k.strip()
+        }
+
+        scored = []
 
         for existing in database.articles():
 
             slug = existing.get("slug", "").lower()
 
             if slug == current_slug:
-
                 continue
 
-            links.append({
+            existing_keywords = {
+                k.lower().strip()
+                for k in existing.get(
+                    "keywords",
+                    []
+                )
+                if k.strip()
+            }
 
-                "title": existing.get("title", ""),
+            score = len(
+                article_keywords &
+                existing_keywords
+            )
 
-                "slug": existing.get("slug", ""),
+            if (
+                score == 0
+                and existing.get(
+                    "category",
+                    ""
+                ).lower()
+                ==
+                article.category.lower()
+            ):
+                score = 1
 
-                "category": existing.get("category", "")
+            if score > 0:
 
-            })
+                scored.append(
 
-            if len(links) >= self.MAX_LINKS:
+                    (
 
-                break
+                        score,
+
+                        {
+
+                            "title": existing.get(
+                                "title",
+                                ""
+                            ),
+
+                            "slug": existing.get(
+                                "slug",
+                                ""
+                            ),
+
+                            "category": existing.get(
+                                "category",
+                                ""
+                            )
+
+                        }
+
+                    )
+
+                )
+
+        scored.sort(
+            reverse=True,
+            key=lambda x: x[0]
+        )
+
+        links = [
+
+            item
+
+            for _, item in scored[
+                :self.MAX_LINKS
+            ]
+
+        ]
 
         logger.info(
 
-            f"Generated {len(links)} internal links."
+            f"Generated {len(links)} ranked internal links."
 
         )
 
