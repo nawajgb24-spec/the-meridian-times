@@ -13,7 +13,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-  
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -31,11 +31,17 @@ jobs:
             pip install -r requirements.txt
           fi
 
+      - name: Test Gemini Image API
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python test_image_api.py
+
       - name: Run News Engine
         env:
-           PYTHONUNBUFFERED: "1"
-           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHONUNBUFFERED: "1"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python static_blogger.py
 
