@@ -1,0 +1,114 @@
+{
+    "events": [
+        {
+            "timestamp": "2026-07-10T08:32:53.617007",
+            "status": "validation_failed",
+            "reason": "Content too short (683 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:33:16.400324",
+            "status": "validation_failed",
+            "reason": "Content too short (734 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:33:36.615849",
+            "status": "validation_failed",
+            "reason": "Content too short (671 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:33:55.717359",
+            "status": "validation_failed",
+            "reason": "Content too short (635 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:34:21.605918",
+            "status": "validation_failed",
+            "reason": "Invalid reading time."
+        },
+        {
+            "timestamp": "2026-07-10T08:34:44.511372",
+            "status": "validation_failed",
+            "reason": "Content too short (754 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:35:10.533390",
+            "status": "validation_failed",
+            "reason": "Content too short (623 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:35:36.896450",
+            "status": "validation_failed",
+            "reason": "Content too short (635 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:35:57.196320",
+            "status": "validation_failed",
+            "reason": "Content too short (520 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:36:16.959160",
+            "status": "validation_failed",
+            "reason": "Content too short (456 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:36:40.188344",
+            "status": "validation_failed",
+            "reason": "Content too short (395 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:37:02.558042",
+            "status": "validation_failed",
+            "reason": "Invalid reading time."
+        },
+        {
+            "timestamp": "2026-07-10T08:37:28.164740",
+            "status": "validation_failed",
+            "reason": "Content too short (471 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:37:44.863823",
+            "status": "validation_failed",
+            "reason": "Content too short (383 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:38:14.681162",
+            "status": "validation_failed",
+            "reason": "Content too short (487 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:38:36.692295",
+            "status": "validation_failed",
+            "reason": "Content too short (457 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:38:56.915453",
+            "status": "validation_failed",
+            "reason": "Content too short (437 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:39:28.783171",
+            "status": "validation_failed",
+            "reason": "Content too short (611 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:39:57.353530",
+            "status": "validation_failed",
+            "reason": "Content too short (643 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:40:21.456286",
+            "status": "validation_failed",
+            "reason": "Content too short (677 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:40:40.879027",
+            "status": "validation_failed",
+            "reason": "Content too short (577 words)."
+        },
+        {
+            "timestamp": "2026-07-10T08:40:40.999620",
+            "status": "daily_quota_exhausted",
+            "reason": "Gemini daily quota exhausted."
+        }
+    ]
+}
