@@ -3,6 +3,7 @@
 import random
 
 from core.article_factory import article_factory
+from core.audit_logger import audit_logger
 from core.config import config
 from core.content_engine import content_engine
 from core.deduplicator import deduplicator
@@ -30,6 +31,11 @@ def main():
 
         logger.error("Startup health check failed.")
 
+        audit_logger.log(
+            status="health_check_failed",
+            reason="Startup health check failed."
+        )
+
         logger.info("=" * 60)
         logger.info("ENGINE STOPPED")
         logger.info("=" * 60)
@@ -48,6 +54,11 @@ def main():
             topics = news_fetcher.fetch(category)
 
         except Exception as e:
+
+            audit_logger.log(
+                status="news_fetch_failed",
+                reason=str(e)
+            )
 
             logger.exception(e)
             continue
@@ -69,6 +80,12 @@ def main():
     for topic in all_topics:
 
         if deduplicator.exists(topic):
+
+            audit_logger.log(
+                status="duplicate_topic",
+                reason=topic
+            )
+
             continue
 
         logger.info(f"Selected Topic: {topic}")
@@ -77,7 +94,9 @@ def main():
 
             package = content_engine.generate(topic)
 
-            article = article_factory.create_from_package(package)
+            article = article_factory.create_from_package(
+                package
+            )
 
             validator.validate(article)
 
@@ -93,10 +112,21 @@ def main():
 
         except ValidationError as e:
 
+            audit_logger.log(
+                status="validation_failed",
+                reason=str(e)
+            )
+
             logger.error(f"Validation failed: {e}")
+
             continue
 
         except DailyQuotaExceeded:
+
+            audit_logger.log(
+                status="daily_quota_exhausted",
+                reason="Gemini daily quota exhausted."
+            )
 
             logger.warning("=" * 60)
             logger.warning("DAILY GEMINI QUOTA EXHAUSTED")
@@ -108,13 +138,30 @@ def main():
 
         except TemporaryRateLimit:
 
+            audit_logger.log(
+                status="temporary_rate_limit",
+                reason="Temporary Gemini rate limit."
+            )
+
             logger.warning("Temporary rate limit reached.")
+
             continue
 
         except Exception as e:
 
+            audit_logger.log(
+                status="publish_failed",
+                reason=str(e)
+            )
+
             logger.exception(e)
+
             continue
+
+    audit_logger.log(
+        status="no_article_published",
+        reason="No eligible topic was published."
+    )
 
     logger.info("No article published.")
     logger.info("=" * 60)
