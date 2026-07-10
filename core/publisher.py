@@ -2,7 +2,6 @@ from core.audit_logger import audit_logger
 from core.database import database
 from core.homepage_builder import homepage_builder
 from core.html_builder import html_builder
-from core.logger import logger
 
 
 class Publisher:
@@ -20,12 +19,6 @@ class Publisher:
             status="published",
 
             article=article
-
-        )
-
-        logger.info(
-
-            f"Published: {article.title}"
 
         )
 
