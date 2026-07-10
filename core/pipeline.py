@@ -1,4 +1,7 @@
+from core.article_factory import article_factory
 from core.config import config
+from core.content_engine import content_engine
+from core.deduplicator import deduplicator
 from core.health_check import health_check
 from core.logger import logger
 from core.news_fetcher import news_fetcher
@@ -9,6 +12,12 @@ class ProductionPipeline:
     def __init__(self):
 
         self.topics = []
+
+        self.package = None
+
+        self.article = None
+
+        self.selected_topic = None
 
     def run(self):
 
@@ -78,18 +87,64 @@ class ProductionPipeline:
                 self.topics.append(topic)
 
         logger.info(
-
             f"Collected {len(self.topics)} unique topics."
-
         )
 
     def generate_article(self):
 
-        pass
+        self.package = None
+
+        self.article = None
+
+        for topic in self.topics:
+
+            if deduplicator.exists(topic):
+
+                logger.info(
+                    f"Skipping duplicate: {topic}"
+                )
+
+                continue
+
+            self.selected_topic = topic
+
+            logger.info(
+                f"Generating article: {topic}"
+            )
+
+            self.package = content_engine.generate(
+                topic
+            )
+
+            logger.info(
+                "Content generation completed."
+            )
+
+            break
+
+        if self.package is None:
+
+            logger.warning(
+                "No eligible topic found."
+            )
 
     def publish(self):
 
-        pass
+        if self.package is None:
+
+            logger.warning(
+                "Nothing to publish."
+            )
+
+            return
+
+        self.article = article_factory.create_from_package(
+            self.package
+        )
+
+        logger.info(
+            f"Article created: {self.article.title}"
+        )
 
     def finish(self):
 
