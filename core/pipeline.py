@@ -1,8 +1,14 @@
+from core.config import config
 from core.health_check import health_check
 from core.logger import logger
+from core.news_fetcher import news_fetcher
 
 
 class ProductionPipeline:
+
+    def __init__(self):
+
+        self.topics = []
 
     def run(self):
 
@@ -15,6 +21,7 @@ class ProductionPipeline:
             logger.info("=" * 60)
             logger.info("PIPELINE STOPPED")
             logger.info("=" * 60)
+
             return
 
         self.collect_topics()
@@ -33,7 +40,48 @@ class ProductionPipeline:
 
     def collect_topics(self):
 
-        pass
+        logger.info("Collecting Topics...")
+
+        seen = set()
+
+        self.topics.clear()
+
+        categories = config.get(
+            "categories",
+            default=[]
+        )
+
+        for category in categories:
+
+            logger.info(f"Category: {category}")
+
+            try:
+
+                topics = news_fetcher.fetch(category)
+
+            except Exception as e:
+
+                logger.exception(e)
+
+                continue
+
+            for topic in topics:
+
+                key = topic.strip().lower()
+
+                if key in seen:
+
+                    continue
+
+                seen.add(key)
+
+                self.topics.append(topic)
+
+        logger.info(
+
+            f"Collected {len(self.topics)} unique topics."
+
+        )
 
     def generate_article(self):
 
