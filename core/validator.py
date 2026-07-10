@@ -15,29 +15,42 @@ class Validator:
         logger.info("CONTENT VALIDATION")
         logger.info("=" * 60)
 
-        if not article.title.strip():
+        self._validate_required_fields(article)
 
-            raise ValidationError("Title is empty.")
+        self._validate_word_count(article)
 
-        if not article.summary.strip():
+        self._validate_seo(article)
 
-            raise ValidationError("Summary is empty.")
+        self._validate_tags(article)
 
-        if not article.content.strip():
+        self._validate_reading_time(article)
 
-            raise ValidationError("Content is empty.")
+        logger.info("Validation Passed")
+        logger.info("=" * 60)
 
-        if not article.slug.strip():
+        return True
 
-            raise ValidationError("Slug is empty.")
+    def _validate_required_fields(self, article):
 
-        if not article.seo_title.strip():
+        required = {
 
-            raise ValidationError("SEO title missing.")
+            "Title": article.title,
 
-        if not article.seo_description.strip():
+            "Summary": article.summary,
 
-            raise ValidationError("SEO description missing.")
+            "Content": article.content,
+
+            "Slug": article.slug,
+
+        }
+
+        for name, value in required.items():
+
+            if not str(value).strip():
+
+                raise ValidationError(f"{name} is empty.")
+
+    def _validate_word_count(self, article):
 
         words = len(article.content.split())
 
@@ -49,11 +62,51 @@ class Validator:
 
             )
 
-        logger.info("Validation Passed")
+    def _validate_seo(self, article):
 
-        logger.info("=" * 60)
+        if not article.seo_title.strip():
 
-        return True
+            raise ValidationError(
+
+                "SEO title missing."
+
+            )
+
+        if not article.seo_description.strip():
+
+            raise ValidationError(
+
+                "SEO description missing."
+
+            )
+
+    def _validate_tags(self, article):
+
+        if not article.tags:
+
+            raise ValidationError(
+
+                "Tags missing."
+
+            )
+
+        if len(article.tags) < 3:
+
+            raise ValidationError(
+
+                "Minimum 3 tags required."
+
+            )
+
+    def _validate_reading_time(self, article):
+
+        if article.reading_time <= 0:
+
+            raise ValidationError(
+
+                "Invalid reading time."
+
+            )
 
 
 validator = Validator()
