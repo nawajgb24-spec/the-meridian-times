@@ -25,27 +25,39 @@ class NewsFetcher:
 
         logger.info(f"Fetching {category}")
 
-        response = self.session.get(
+        try:
 
-            RSS_URL,
+            response = self.session.get(
 
-            params={
+                RSS_URL,
 
-                "q": category,
+                params={
 
-                "hl": "en-US",
+                    "q": category,
 
-                "gl": "US",
+                    "hl": "en-US",
 
-                "ceid": "US:en"
+                    "gl": "US",
 
-            },
+                    "ceid": "US:en"
 
-            timeout=30
+                },
 
-        )
+                timeout=30
 
-        response.raise_for_status()
+            )
+
+            response.raise_for_status()
+
+        except requests.RequestException as e:
+
+            logger.error(
+
+                f"News fetch failed: {e}"
+
+            )
+
+            return []
 
         root = ET.fromstring(response.text)
 
@@ -75,7 +87,11 @@ class NewsFetcher:
 
         random.shuffle(topics)
 
-        logger.info(f"{len(topics)} unique topics found")
+        logger.info(
+
+            f"{len(topics)} unique topics found"
+
+        )
 
         return topics
 
