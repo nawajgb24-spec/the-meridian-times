@@ -7,7 +7,10 @@ from core.logger import logger
 from core.news_fetcher import news_fetcher
 from core.publisher import publisher
 from core.regeneration_engine import regeneration_engine
-from core.validator import validator, ValidationError
+from core.validator import (
+    validator,
+    ValidationError,
+)
 
 
 class ProductionPipeline:
@@ -15,9 +18,12 @@ class ProductionPipeline:
     def __init__(self):
 
         self.topics = []
-        self.package = None
-        self.article = None
+
         self.selected_topic = None
+
+        self.package = None
+
+        self.article = None
 
     def run(self):
 
@@ -25,47 +31,72 @@ class ProductionPipeline:
         logger.info("PRODUCTION PIPELINE STARTED")
         logger.info("=" * 60)
 
-        if not self.health_check():
+        if not health_check.run():
 
-            logger.info("=" * 60)
-            logger.info("PIPELINE STOPPED")
-            logger.info("=" * 60)
+            logger.error(
+                "Health Check Failed."
+            )
+
+            self.finish()
+
             return
 
         self.collect_topics()
 
-        self.generate_article()
+        if not self.topics:
 
-        self.publish()
+            logger.warning(
+                "No topics collected."
+            )
+
+            self.finish()
+
+            return
+
+        published = False
+
+        for topic in self.topics:
+
+            published = self.process_topic(
+                topic
+            )
+
+            if published:
+
+                break
+
+        if not published:
+
+            logger.warning(
+                "No article could be published."
+            )
 
         self.finish()
 
-    def health_check(self):
-
-        logger.info("Running Health Check...")
-
-        return health_check.run()
-
     def collect_topics(self):
 
-        logger.info("Collecting Topics...")
+        logger.info(
+            "Collecting Topics..."
+        )
 
         seen = set()
 
         self.topics.clear()
 
-        categories = config.get(
+        for category in config.get(
             "categories",
             default=[]
-        )
+        ):
 
-        for category in categories:
-
-            logger.info(f"Category: {category}")
+            logger.info(
+                f"Category: {category}"
+            )
 
             try:
 
-                topics = news_fetcher.fetch(category)
+                topics = news_fetcher.fetch(
+                    category
+                )
 
             except Exception as e:
 
@@ -83,58 +114,47 @@ class ProductionPipeline:
 
                 seen.add(key)
 
-                self.topics.append(topic)
-
-        logger.info(
-            f"Collected {len(self.topics)} unique topics."
-        )
-
-    def generate_article(self):
-
-        self.package = None
-        self.article = None
-
-        for topic in self.topics:
-
-            if deduplicator.exists(topic):
-
-                logger.info(
-                    f"Skipping duplicate: {topic}"
+                self.topics.append(
+                    topic
                 )
 
-                continue
+        logger.info(
 
-            self.selected_topic = topic
+            f"{len(self.topics)} unique topics collected."
+
+        )
+
+    def process_topic(self, topic):
+
+        self.selected_topic = topic
+
+        if deduplicator.exists(topic):
 
             logger.info(
-                f"Generating article: {topic}"
+
+                f"Duplicate skipped: {topic}"
+
             )
+
+            return False
+
+        logger.info(
+
+            f"Processing: {topic}"
+
+        )
+
+        try:
 
             self.package = content_engine.generate(
                 topic
             )
 
-            logger.info(
-                "Content generation completed."
-            )
+        except Exception as e:
 
-            break
+            logger.exception(e)
 
-        if self.package is None:
-
-            logger.warning(
-                "No eligible topic found."
-            )
-
-    def publish(self):
-
-        if self.package is None:
-
-            logger.warning(
-                "Nothing to publish."
-            )
-
-            return
+            return False
 
         self.article = article_factory.create_from_package(
             self.package
@@ -148,30 +168,54 @@ class ProductionPipeline:
 
         except ValidationError as e:
 
-            logger.error(
+            logger.warning(
                 f"Validation failed: {e}"
             )
 
-            self.article = None
+            logger.info(
+                "Attempting regeneration..."
+            )
 
-            return
+            try:
 
-        logger.info(
-            f"Validated: {self.article.title}"
-        )
+                self.package = regeneration_engine.expand(
+                    self.package
+                )
+
+                self.article = article_factory.create_from_package(
+                    self.package
+                )
+
+                validator.validate(
+                    self.article
+                )
+
+            except Exception as regen_error:
+
+                logger.error(
+                    f"Regeneration failed: {regen_error}"
+                )
+
+                return False
 
         publisher.publish(
             self.article
         )
 
         logger.info(
-            "Publishing completed."
+            f"Published: {self.article.title}"
         )
+
+        return True
 
     def finish(self):
 
         logger.info("=" * 60)
-        logger.info("PRODUCTION PIPELINE FINISHED")
+
+        logger.info(
+            "PRODUCTION PIPELINE FINISHED"
+        )
+
         logger.info("=" * 60)
 
 
