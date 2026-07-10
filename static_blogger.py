@@ -8,6 +8,7 @@ from core.config import config
 from core.content_engine import content_engine
 from core.deduplicator import deduplicator
 from core.health_check import health_check
+from core.health_dashboard import health_dashboard
 from core.logger import logger
 from core.news_fetcher import news_fetcher
 from core.publisher import publisher
@@ -19,6 +20,29 @@ from core.validator import (
     validator,
     ValidationError,
 )
+
+
+def show_dashboard():
+
+    summary = health_dashboard.summary()
+
+    logger.info("=" * 60)
+    logger.info("HEALTH DASHBOARD")
+    logger.info("=" * 60)
+    logger.info(f"Published          : {summary['published']}")
+    logger.info(f"Failed             : {summary['failed']}")
+    logger.info(f"Validation Failed  : {summary['validation']}")
+    logger.info(f"Quota Events       : {summary['quota']}")
+    logger.info("=" * 60)
+
+
+def finish():
+
+    show_dashboard()
+
+    logger.info("=" * 60)
+    logger.info("ENGINE FINISHED")
+    logger.info("=" * 60)
 
 
 def main():
@@ -39,6 +63,8 @@ def main():
         logger.info("=" * 60)
         logger.info("ENGINE STOPPED")
         logger.info("=" * 60)
+
+        show_dashboard()
 
         return
 
@@ -104,9 +130,7 @@ def main():
 
             logger.info(f"Published: {article.title}")
 
-            logger.info("=" * 60)
-            logger.info("ENGINE FINISHED")
-            logger.info("=" * 60)
+            finish()
 
             return
 
@@ -133,6 +157,8 @@ def main():
             logger.warning("Publishing skipped.")
             logger.warning("Workflow completed successfully.")
             logger.warning("=" * 60)
+
+            finish()
 
             return
 
@@ -164,9 +190,8 @@ def main():
     )
 
     logger.info("No article published.")
-    logger.info("=" * 60)
-    logger.info("ENGINE FINISHED")
-    logger.info("=" * 60)
+
+    finish()
 
 
 if __name__ == "__main__":
