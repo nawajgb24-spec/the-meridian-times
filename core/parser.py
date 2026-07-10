@@ -14,18 +14,29 @@ class Parser:
 
         data = json.loads(text)
 
+        research = data.get("research", data)
+
         return ResearchReport(
 
-            topic=data["topic"],
-            category=data["category"],
-            summary=data["summary"],
-            facts=data.get("facts", []),
-            timeline=data.get("timeline", []),
-            people=data.get("people", []),
-            organizations=data.get("organizations", []),
-            locations=data.get("locations", []),
-            keywords=data.get("keywords", []),
-            source_links=data.get("source_links", [])
+            topic=research.get("topic", ""),
+
+            category=research.get("category", ""),
+
+            summary=research.get("summary", ""),
+
+            facts=research.get("facts", []),
+
+            timeline=research.get("timeline", []),
+
+            people=research.get("people", []),
+
+            organizations=research.get("organizations", []),
+
+            locations=research.get("locations", []),
+
+            keywords=research.get("keywords", []),
+
+            source_links=research.get("source_links", [])
 
         )
 
@@ -34,14 +45,27 @@ class Parser:
 
         data = json.loads(text)
 
+        outline = data.get("outline", data)
+
         return OutlinePlan(
 
-            title=data["title"],
-            category=data["category"],
-            sections=data.get("sections", []),
-            image_sections=data.get("image_sections", []),
-            estimated_words=data.get("estimated_words", 1000),
-            reading_time=data.get("reading_time", 5)
+            title=outline.get("title", ""),
+
+            category=outline.get("category", ""),
+
+            sections=outline.get("sections", []),
+
+            image_sections=outline.get("image_sections", []),
+
+            estimated_words=outline.get(
+                "estimated_words",
+                1000
+            ),
+
+            reading_time=outline.get(
+                "reading_time",
+                5
+            )
 
         )
 
@@ -50,18 +74,49 @@ class Parser:
 
         data = json.loads(text)
 
+        article = data.get("article", data)
+
         return ArticleDraft(
 
-            title=data["title"],
-            summary=data["summary"],
-            content=data["content"],
-            category=data["category"],
-            slug=data["slug"],
-            featured_image=data.get("featured_image", ""),
-            tags=data.get("tags", []),
-            keywords=data.get("keywords", []),
-            word_count=data.get("word_count", 0),
-            reading_time=data.get("reading_time", 0)
+            title=article.get("title", ""),
+
+            summary=article.get("summary", ""),
+
+            content=article.get("content", ""),
+
+            category=article.get("category", ""),
+
+            slug=article.get("slug", ""),
+
+            featured_image=article.get(
+                "featured_image",
+                ""
+            ),
+
+            tags=article.get(
+                "tags",
+                []
+            ),
+
+            keywords=article.get(
+                "keywords",
+                []
+            ),
+
+            source_links=article.get(
+                "source_links",
+                []
+            ),
+
+            word_count=article.get(
+                "word_count",
+                0
+            ),
+
+            reading_time=article.get(
+                "reading_time",
+                0
+            )
 
         )
 
@@ -70,17 +125,48 @@ class Parser:
 
         data = json.loads(text)
 
+        seo = data.get("seo", data)
+
         return SEOData(
 
-            seo_title=data["seo_title"],
-            meta_description=data["meta_description"],
-            slug=data["slug"],
-            focus_keyword=data.get("focus_keyword", ""),
-            secondary_keywords=data.get("secondary_keywords", []),
-            tags=data.get("tags", []),
-            image_alt=data.get("image_alt", ""),
-            image_caption=data.get("image_caption", ""),
-            canonical_url=data.get("canonical_url", "")
+            seo_title=seo.get("seo_title", ""),
+
+            meta_description=seo.get(
+                "meta_description",
+                ""
+            ),
+
+            slug=seo.get("slug", ""),
+
+            focus_keyword=seo.get(
+                "focus_keyword",
+                ""
+            ),
+
+            secondary_keywords=seo.get(
+                "secondary_keywords",
+                []
+            ),
+
+            tags=seo.get(
+                "tags",
+                []
+            ),
+
+            image_alt=seo.get(
+                "image_alt",
+                ""
+            ),
+
+            image_caption=seo.get(
+                "image_caption",
+                ""
+            ),
+
+            canonical_url=seo.get(
+                "canonical_url",
+                ""
+            )
 
         )
 
@@ -89,17 +175,54 @@ class Parser:
 
         data = json.loads(text)
 
+        report = data.get("report", data)
+
         return EditorialReport(
 
-            editorial_score=data["editorial_score"],
-            originality=data["originality"],
-            fact_consistency=data["fact_consistency"],
-            readability=data["readability"],
-            grammar=data["grammar"],
-            structure=data["structure"],
-            seo=data["seo"],
-            copyright_risk=data["copyright_risk"],
-            decision=data["decision"]
+            editorial_score=report.get(
+                "editorial_score",
+                0
+            ),
+
+            originality=report.get(
+                "originality",
+                0
+            ),
+
+            fact_consistency=report.get(
+                "fact_consistency",
+                0
+            ),
+
+            readability=report.get(
+                "readability",
+                0
+            ),
+
+            grammar=report.get(
+                "grammar",
+                0
+            ),
+
+            structure=report.get(
+                "structure",
+                0
+            ),
+
+            seo=report.get(
+                "seo",
+                0
+            ),
+
+            copyright_risk=report.get(
+                "copyright_risk",
+                0
+            ),
+
+            decision=report.get(
+                "decision",
+                ""
+            )
 
         )
 
