@@ -14,6 +14,10 @@ from core.retry import (
     DailyQuotaExceeded,
     TemporaryRateLimit,
 )
+from core.validator import (
+    validator,
+    ValidationError,
+)
 
 
 def main():
@@ -22,7 +26,6 @@ def main():
     logger.info("THE MERIDIAN TIMES ENGINE STARTED")
     logger.info("=" * 60)
 
-    # Health Check
     if not health_check.run():
 
         logger.error("Startup health check failed.")
@@ -74,21 +77,24 @@ def main():
 
             package = content_engine.generate(topic)
 
-            article = article_factory.create_from_package(
-                package
-            )
+            article = article_factory.create_from_package(package)
+
+            validator.validate(article)
 
             publisher.publish(article)
 
-            logger.info(
-                f"Published: {article.title}"
-            )
+            logger.info(f"Published: {article.title}")
 
             logger.info("=" * 60)
             logger.info("ENGINE FINISHED")
             logger.info("=" * 60)
 
             return
+
+        except ValidationError as e:
+
+            logger.error(f"Validation failed: {e}")
+            continue
 
         except DailyQuotaExceeded:
 
@@ -102,20 +108,15 @@ def main():
 
         except TemporaryRateLimit:
 
-            logger.warning(
-                "Temporary rate limit reached."
-            )
-
+            logger.warning("Temporary rate limit reached.")
             continue
 
         except Exception as e:
 
             logger.exception(e)
-
             continue
 
     logger.info("No article published.")
-
     logger.info("=" * 60)
     logger.info("ENGINE FINISHED")
     logger.info("=" * 60)
