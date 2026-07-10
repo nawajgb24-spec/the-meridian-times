@@ -10,6 +10,9 @@ INDEX_FILE = Path("index.html")
 
 class HomepageBuilder:
 
+    FEATURED_LIMIT = 5
+    LATEST_LIMIT = 30
+
     def build(self):
 
         if not ARTICLES_FILE.exists():
@@ -26,32 +29,75 @@ class HomepageBuilder:
 
             data = json.load(f)
 
-        articles = data.get("articles", [])
-
         articles = sorted(
 
-            articles,
+            data.get("articles", []),
 
-            key=lambda x: x["published_at"],
+            key=lambda x: x.get(
+                "published_at",
+                ""
+            ),
 
             reverse=True
 
-        )[:30]
+        )
 
-        cards = ""
+        featured = articles[
+            :self.FEATURED_LIMIT
+        ]
 
-        for article in articles:
+        latest = articles[
+            :self.LATEST_LIMIT
+        ]
 
-            cards += f"""
-<article class="news-card">
+        featured_html = ""
+
+        for article in featured:
+
+            featured_html += f"""
+<article class="featured-card">
 
 <h2>
+
 <a href="posts/{article['slug']}.html">
+
 {article['title']}
+
 </a>
+
 </h2>
 
-<p>{article['summary']}</p>
+<p>
+
+{article['summary']}
+
+</p>
+
+</article>
+"""
+
+        latest_html = ""
+
+        for article in latest:
+
+            latest_html += f"""
+<article class="news-card">
+
+<h3>
+
+<a href="posts/{article['slug']}.html">
+
+{article['title']}
+
+</a>
+
+</h3>
+
+<p>
+
+{article['summary']}
+
+</p>
 
 <small>
 
@@ -60,7 +106,6 @@ class HomepageBuilder:
 </small>
 
 </article>
-
 """
 
         html = f"""<!DOCTYPE html>
@@ -77,7 +122,7 @@ content="width=device-width, initial-scale=1">
 <title>The Meridian Times</title>
 
 <meta name="description"
-content="Latest News">
+content="Latest global news">
 
 </head>
 
@@ -91,7 +136,21 @@ content="Latest News">
 
 <main>
 
-{cards}
+<section>
+
+<h2>Featured News</h2>
+
+{featured_html}
+
+</section>
+
+<section>
+
+<h2>Latest News</h2>
+
+{latest_html}
+
+</section>
 
 </main>
 
@@ -108,7 +167,9 @@ content="Latest News">
 
         )
 
-        logger.info("Homepage generated.")
+        logger.info(
+            "Homepage generated."
+        )
 
 
 homepage_builder = HomepageBuilder()
