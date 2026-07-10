@@ -109,6 +109,16 @@
             "timestamp": "2026-07-10T08:40:40.999620",
             "status": "daily_quota_exhausted",
             "reason": "Gemini daily quota exhausted."
+        },
+        {
+            "timestamp": "2026-07-10T11:23:43.596521",
+            "status": "validation_failed",
+            "reason": "Content too short (355 words)."
+        },
+        {
+            "timestamp": "2026-07-10T11:23:43.697045",
+            "status": "daily_quota_exhausted",
+            "reason": "Gemini daily quota exhausted."
         }
     ]
 }
