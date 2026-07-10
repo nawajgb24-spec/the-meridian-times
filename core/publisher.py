@@ -3,6 +3,7 @@ from core.database import database
 from core.homepage_builder import homepage_builder
 from core.html_builder import html_builder
 from core.image_generator import image_generator
+from core.sitemap_builder import sitemap_builder
 from core.trending_engine import trending_engine
 
 
@@ -29,6 +30,8 @@ class Publisher:
         html_builder.build(article)
 
         homepage_builder.build()
+
+        sitemap_builder.build()
 
         audit_logger.log(
 
