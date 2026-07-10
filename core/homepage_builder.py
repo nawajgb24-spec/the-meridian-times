@@ -11,6 +11,7 @@ INDEX_FILE = Path("index.html")
 class HomepageBuilder:
 
     FEATURED_LIMIT = 5
+    TRENDING_LIMIT = 10
     LATEST_LIMIT = 30
 
     def build(self):
@@ -29,84 +30,55 @@ class HomepageBuilder:
 
             data = json.load(f)
 
-        articles = sorted(
+        articles = data.get("articles", [])
 
-            data.get("articles", []),
-
+        latest = sorted(
+            articles,
             key=lambda x: x.get(
                 "published_at",
                 ""
             ),
-
             reverse=True
-
         )
 
-        featured = articles[
-            :self.FEATURED_LIMIT
-        ]
+        trending = sorted(
+            articles,
+            key=lambda x: x.get(
+                "trending_score",
+                0
+            ),
+            reverse=True
+        )
 
-        latest = articles[
-            :self.LATEST_LIMIT
-        ]
+        featured = trending[:self.FEATURED_LIMIT]
+        trending = trending[:self.TRENDING_LIMIT]
+        latest = latest[:self.LATEST_LIMIT]
 
-        featured_html = ""
+        def render(items, heading_level):
 
-        for article in featured:
+            html = ""
 
-            featured_html += f"""
-<article class="featured-card">
+            for article in items:
 
-<h2>
-
-<a href="posts/{article['slug']}.html">
-
-{article['title']}
-
-</a>
-
-</h2>
-
-<p>
-
-{article['summary']}
-
-</p>
-
-</article>
-"""
-
-        latest_html = ""
-
-        for article in latest:
-
-            latest_html += f"""
+                html += f"""
 <article class="news-card">
 
-<h3>
-
+<h{heading_level}>
 <a href="posts/{article['slug']}.html">
-
 {article['title']}
-
 </a>
+</h{heading_level}>
 
-</h3>
-
-<p>
-
-{article['summary']}
-
-</p>
+<p>{article['summary']}</p>
 
 <small>
-
 {article['category']}
-
 </small>
 
 </article>
 """
+
+            return html
 
         html = f"""<!DOCTYPE html>
 
@@ -138,17 +110,25 @@ content="Latest global news">
 
 <section>
 
-<h2>Featured News</h2>
+<h2>⭐ Featured Stories</h2>
 
-{featured_html}
+{render(featured, 2)}
 
 </section>
 
 <section>
 
-<h2>Latest News</h2>
+<h2>🔥 Trending News</h2>
 
-{latest_html}
+{render(trending, 3)}
+
+</section>
+
+<section>
+
+<h2>📰 Latest News</h2>
+
+{render(latest, 3)}
 
 </section>
 
