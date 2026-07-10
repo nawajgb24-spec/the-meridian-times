@@ -5,6 +5,7 @@ from core.deduplicator import deduplicator
 from core.health_check import health_check
 from core.logger import logger
 from core.news_fetcher import news_fetcher
+from core.publisher import publisher
 from core.validator import validator, ValidationError
 
 
@@ -68,6 +69,7 @@ class ProductionPipeline:
             except Exception as e:
 
                 logger.exception(e)
+
                 continue
 
             for topic in topics:
@@ -75,6 +77,7 @@ class ProductionPipeline:
                 key = topic.strip().lower()
 
                 if key in seen:
+
                     continue
 
                 seen.add(key)
@@ -154,6 +157,14 @@ class ProductionPipeline:
 
         logger.info(
             f"Validated: {self.article.title}"
+        )
+
+        publisher.publish(
+            self.article
+        )
+
+        logger.info(
+            "Publishing completed."
         )
 
     def finish(self):
