@@ -159,6 +159,16 @@
             "timestamp": "2026-07-10T16:49:14.330924",
             "status": "daily_quota_exhausted",
             "reason": "Gemini daily quota exhausted."
+        },
+        {
+            "timestamp": "2026-07-10T17:00:36.206194",
+            "status": "published",
+            "reason": "",
+            "title": "Nutrition Policy Scholar Marion Nestle to Deliver Key Address on Food Politics",
+            "slug": "marion-nestle-nutrition-policy-speech-march-19",
+            "category": "Health & Science",
+            "word_count": 1152,
+            "reading_time": 6
         }
     ]
 }
