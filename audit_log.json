@@ -119,6 +119,16 @@
             "timestamp": "2026-07-10T11:23:43.697045",
             "status": "daily_quota_exhausted",
             "reason": "Gemini daily quota exhausted."
+        },
+        {
+            "timestamp": "2026-07-10T14:24:25.118635",
+            "status": "published",
+            "reason": "",
+            "title": "'Deeply Odd State of Affairs': Tech Experts Decry Activision's 'Low Effort' Call of Duty: Black Ops Cold War PS5 Port",
+            "slug": "activision-call-of-duty-black-ops-cold-war-ps5-port-controversy",
+            "category": "Gaming Technology",
+            "word_count": 1184,
+            "reading_time": 6
         }
     ]
 }
