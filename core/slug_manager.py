@@ -1,3 +1,5 @@
+import re
+
 from core.database import database
 
 
@@ -5,11 +7,15 @@ class SlugManager:
 
     def unique_slug(self, slug: str) -> str:
 
-        slug = slug.strip().lower()
+        slug = self._normalize(slug)
 
         existing = {
 
-            article["slug"].lower()
+            self._normalize(
+
+                article.get("slug", "")
+
+            )
 
             for article in database.articles()
 
@@ -30,6 +36,21 @@ class SlugManager:
                 return candidate
 
             counter += 1
+
+    @staticmethod
+    def _normalize(slug: str) -> str:
+
+        slug = slug.strip().lower()
+
+        slug = slug.replace("_", "-")
+
+        slug = re.sub(r"[^a-z0-9\- ]", "", slug)
+
+        slug = slug.replace(" ", "-")
+
+        slug = re.sub(r"-+", "-", slug)
+
+        return slug.strip("-")
 
 
 slug_manager = SlugManager()
