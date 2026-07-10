@@ -6,6 +6,7 @@ from core.health_check import health_check
 from core.logger import logger
 from core.news_fetcher import news_fetcher
 from core.publisher import publisher
+from core.regeneration_engine import regeneration_engine
 from core.validator import validator, ValidationError
 
 
