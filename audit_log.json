@@ -149,6 +149,16 @@
             "category": "Sports News",
             "word_count": 1137,
             "reading_time": 6
+        },
+        {
+            "timestamp": "2026-07-10T16:49:14.181160",
+            "status": "publish_failed",
+            "reason": "Expecting ',' delimiter: line 67 column 4620 (char 8535)"
+        },
+        {
+            "timestamp": "2026-07-10T16:49:14.330924",
+            "status": "daily_quota_exhausted",
+            "reason": "Gemini daily quota exhausted."
         }
     ]
 }
