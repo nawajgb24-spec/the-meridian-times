@@ -1,7 +1,9 @@
 import json
 from pathlib import Path
 
+from core.archive_manager import archive_manager
 from core.logger import logger
+
 
 ARTICLES_FILE = Path("articles.json")
 
@@ -25,9 +27,13 @@ class Database:
             return
 
         with open(
+
             ARTICLES_FILE,
+
             "r",
+
             encoding="utf-8"
+
         ) as f:
 
             self.data = json.load(f)
@@ -35,33 +41,54 @@ class Database:
     def save(self):
 
         with open(
+
             ARTICLES_FILE,
+
             "w",
+
             encoding="utf-8"
+
         ) as f:
 
             json.dump(
+
                 self.data,
+
                 f,
+
                 indent=4,
+
                 ensure_ascii=False
+
             )
+
+        archive_manager.rotate()
 
     def add(self, article):
 
         self.data["articles"].append(
+
             article.to_dict()
+
         )
 
         self.save()
 
         logger.info(
+
             f"Saved article: {article.title}"
+
         )
 
     def articles(self):
 
-        return self.data["articles"]
+        return self.data.get(
+
+            "articles",
+
+            []
+
+        )
 
 
 database = Database()
