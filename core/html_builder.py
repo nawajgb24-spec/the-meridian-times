@@ -1,6 +1,7 @@
 from html import escape
 from pathlib import Path
 
+from core.internal_linker import internal_linker
 from core.logger import logger
 
 
@@ -11,6 +12,26 @@ POSTS_DIR.mkdir(exist_ok=True)
 class HtmlBuilder:
 
     def build(self, article):
+
+        related = internal_linker.build(article)
+
+        related_html = ""
+
+        if related:
+
+            related_html += "<section><h2>Related Articles</h2><ul>"
+
+            for item in related:
+
+                related_html += f"""
+<li>
+<a href="{item['slug']}.html">
+{escape(item['title'])}
+</a>
+</li>
+"""
+
+            related_html += "</ul></section>"
 
         html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -33,13 +54,15 @@ class HtmlBuilder:
 
 <h1>{escape(article.title)}</h1>
 
+<p>{escape(article.summary)}</p>
+
 </header>
 
 <main>
 
-<p>{escape(article.summary)}</p>
-
 {article.content}
+
+{related_html}
 
 </main>
 
