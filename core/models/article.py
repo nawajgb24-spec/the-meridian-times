@@ -35,6 +35,8 @@ class Article:
 
     word_count: int = 0
 
+    trending_score: int = 0
+
     seo_title: str = ""
 
     seo_description: str = ""
@@ -68,6 +70,8 @@ class Article:
             "reading_time": self.reading_time,
 
             "word_count": self.word_count,
+
+            "trending_score": self.trending_score,
 
             "tags": self.tags,
 
