@@ -1,6 +1,9 @@
 from core.audit_logger import audit_logger
 from core.category_builder import category_builder
 from core.database import database
+from core.google_news_sitemap_builder import (
+    google_news_sitemap_builder,
+)
 from core.homepage_builder import homepage_builder
 from core.html_builder import html_builder
 from core.image_generator import image_generator
@@ -38,6 +41,8 @@ class Publisher:
         category_builder.build()
 
         sitemap_builder.build()
+
+        google_news_sitemap_builder.build()
 
         robots_builder.build()
 
