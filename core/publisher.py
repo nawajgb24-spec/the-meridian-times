@@ -5,6 +5,7 @@ from core.html_builder import html_builder
 from core.image_generator import image_generator
 from core.robots_builder import robots_builder
 from core.rss_builder import rss_builder
+from core.search_index_builder import search_index_builder
 from core.sitemap_builder import sitemap_builder
 from core.trending_engine import trending_engine
 
@@ -38,6 +39,8 @@ class Publisher:
         robots_builder.build()
 
         rss_builder.build()
+
+        search_index_builder.build()
 
         audit_logger.log(
 
