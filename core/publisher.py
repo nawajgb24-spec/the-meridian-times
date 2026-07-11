@@ -1,4 +1,5 @@
 from core.audit_logger import audit_logger
+from core.category_builder import category_builder
 from core.database import database
 from core.homepage_builder import homepage_builder
 from core.html_builder import html_builder
@@ -33,6 +34,8 @@ class Publisher:
         html_builder.build(article)
 
         homepage_builder.build()
+
+        category_builder.build()
 
         sitemap_builder.build()
 
