@@ -5,16 +5,20 @@ from core.logger import logger
 
 ROBOTS_FILE = Path("robots.txt")
 
+SITE_URL = "https://themeridiantimes.com"
+
 
 class RobotsBuilder:
 
     def build(self):
 
-        content = """User-agent: *
+        content = f"""User-agent: *
 
 Allow: /
 
-Sitemap: https://themeridiantimes.com/sitemap.xml
+Sitemap: {SITE_URL}/sitemap.xml
+Sitemap: {SITE_URL}/news-sitemap.xml
+Sitemap: {SITE_URL}/rss.xml
 """
 
         ROBOTS_FILE.write_text(
