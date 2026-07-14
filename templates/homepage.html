@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -11,7 +10,8 @@ content="width=device-width, initial-scale=1.0">
 
 <title>The Meridian Times</title>
 
-<meta name="description"
+<meta
+name="description"
 content="Latest Global News">
 
 <link
@@ -24,9 +24,57 @@ href="assets/css/main.css">
 
 {{HEADER}}
 
-<main>
+<main class="container">
 
-{{HOMEPAGE_CONTENT}}
+{{HERO}}
+
+<section>
+
+<h2 class="section-title">
+
+Featured Stories
+
+</h2>
+
+<div class="news-grid">
+
+{{FEATURED}}
+
+</div>
+
+</section>
+
+<div class="content-layout">
+
+<section class="latest-column">
+
+<h2 class="section-title">
+
+Latest News
+
+</h2>
+
+<div class="news-grid">
+
+{{LATEST}}
+
+</div>
+
+</section>
+
+<aside class="sidebar">
+
+<h2 class="section-title">
+
+Trending
+
+</h2>
+
+{{TRENDING}}
+
+</aside>
+
+</div>
 
 </main>
 
