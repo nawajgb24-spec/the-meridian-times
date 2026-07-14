@@ -1,7 +1,9 @@
 import json
+from html import escape
 from pathlib import Path
 
 from core.logger import logger
+from core.template_engine import template_engine
 
 
 ARTICLES_FILE = Path("articles.json")
@@ -17,139 +19,74 @@ class HomepageBuilder:
     def build(self):
 
         if not ARTICLES_FILE.exists():
-
             logger.warning("articles.json not found.")
-
             return
 
-        with open(
-            ARTICLES_FILE,
-            "r",
-            encoding="utf-8"
-        ) as f:
-
+        with open(ARTICLES_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         articles = data.get("articles", [])
 
         latest = sorted(
             articles,
-            key=lambda x: x.get(
-                "published_at",
-                ""
-            ),
+            key=lambda x: x.get("published_at", ""),
             reverse=True
-        )
+        )[:self.LATEST_LIMIT]
 
         trending = sorted(
             articles,
-            key=lambda x: x.get(
-                "trending_score",
-                0
-            ),
+            key=lambda x: x.get("trending_score", 0),
             reverse=True
-        )
+        )[:self.TRENDING_LIMIT]
 
         featured = trending[:self.FEATURED_LIMIT]
-        trending = trending[:self.TRENDING_LIMIT]
-        latest = latest[:self.LATEST_LIMIT]
 
-        def render(items, heading_level):
-
+        def render_cards(items, heading=3):
             html = ""
-
             for article in items:
-
                 html += f"""
 <article class="news-card">
-
-<h{heading_level}>
-<a href="posts/{article['slug']}.html">
-{article['title']}
+<a class="news-link" href="posts/{article.get('slug','')}.html">
+<div class="news-card-body">
+<div class="news-category">{escape(str(article.get('category','General')))}</div>
+<h{heading} class="news-title">{escape(str(article.get('title','')))}</h{heading}>
+<p class="news-summary">{escape(str(article.get('summary','')))}</p>
+<div class="news-footer"><span class="read-more">Read More →</span></div>
+</div>
 </a>
-</h{heading_level}>
-
-<p>{article['summary']}</p>
-
-<small>
-{article['category']}
-</small>
-
 </article>
 """
-
             return html
 
-        html = f"""<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1">
-
-<title>The Meridian Times</title>
-
-<meta name="description"
-content="Latest global news">
-
-</head>
-
-<body>
-
-<header>
-
-<h1>The Meridian Times</h1>
-
-</header>
-
-<main>
-
-<section>
-
-<h2>⭐ Featured Stories</h2>
-
-{render(featured, 2)}
-
+        hero = ""
+        if featured:
+            a = featured[0]
+            hero = f"""
+<section class="hero">
+<div>
+<h1>{escape(str(a.get('title','')))}</h1>
+<p>{escape(str(a.get('summary','')))}</p>
+</div>
 </section>
-
-<section>
-
-<h2>🔥 Trending News</h2>
-
-{render(trending, 3)}
-
-</section>
-
-<section>
-
-<h2>📰 Latest News</h2>
-
-{render(latest, 3)}
-
-</section>
-
-</main>
-
-</body>
-
-</html>
 """
 
-        INDEX_FILE.write_text(
+        header = template_engine.load("header.html")
+        footer = template_engine.load("footer.html")
 
-            html,
-
-            encoding="utf-8"
-
+        html = template_engine.render(
+            "homepage.html",
+            {
+                "HEADER": header,
+                "FOOTER": footer,
+                "HERO": hero,
+                "FEATURED": render_cards(featured,2),
+                "TRENDING": render_cards(trending,3),
+                "LATEST": render_cards(latest,3),
+            },
         )
 
-        logger.info(
-            "Homepage generated."
-        )
+        INDEX_FILE.write_text(html, encoding="utf-8")
+        logger.info("Homepage generated.")
 
 
 homepage_builder = HomepageBuilder()
