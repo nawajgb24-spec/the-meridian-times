@@ -437,3 +437,97 @@ a{
     }
 
 }
+
+/* ===========================
+   HEADER BUTTONS
+=========================== */
+
+.dark-toggle,
+.menu-toggle{
+
+    width:44px;
+
+    height:44px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#f3f3f3;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    transition:.25s;
+
+}
+
+.dark-toggle:hover,
+.menu-toggle:hover{
+
+    background:#c40000;
+
+    color:#fff;
+
+}
+
+.menu-toggle{
+
+    display:none;
+
+}
+
+/* ===========================
+   MOBILE MENU
+=========================== */
+
+@media (max-width:900px){
+
+    .menu-toggle{
+
+        display:block;
+
+    }
+
+    .main-nav{
+
+        display:none;
+
+        position:absolute;
+
+        top:72px;
+
+        left:0;
+
+        width:100%;
+
+        background:#fff;
+
+        padding:20px;
+
+        box-shadow:0 10px 25px rgba(0,0,0,.1);
+
+    }
+
+    .main-nav.show-menu{
+
+        display:block;
+
+    }
+
+    .main-nav ul{
+
+        flex-direction:column;
+
+        gap:16px;
+
+    }
+
+    body.dark-mode .main-nav{
+
+        background:#1c1c1c;
+
+    }
+
+}
