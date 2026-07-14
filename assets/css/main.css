@@ -531,3 +531,43 @@ a{
     }
 
 }
+
+/* ===========================
+   HERO BANNER
+=========================== */
+
+.hero{
+
+    background:linear-gradient(
+        135deg,
+        #b30000,
+        #d62828
+    );
+
+    color:#fff;
+
+    padding:60px;
+
+    border-radius:18px;
+
+    margin:30px 0;
+
+}
+
+.hero h1{
+
+    font-size:48px;
+
+    margin-bottom:16px;
+
+    line-height:1.2;
+
+}
+
+.hero p{
+
+    font-size:18px;
+
+    opacity:.9;
+
+}
