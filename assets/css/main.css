@@ -657,3 +657,65 @@ body.dark-mode .breaking-text{
     color:#ddd;
 
 }
+
+/* ===========================
+   FEATURED SECTION
+=========================== */
+
+.featured-section{
+
+    margin:40px 0;
+
+}
+
+.featured-layout{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:30px;
+
+    align-items:start;
+
+}
+
+.featured-main{
+
+    display:grid;
+
+    gap:24px;
+
+}
+
+.featured-side{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+.featured-side .news-card{
+
+    margin:0;
+
+}
+
+.featured-side .news-title{
+
+    font-size:18px;
+
+}
+
+@media (max-width:900px){
+
+    .featured-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
