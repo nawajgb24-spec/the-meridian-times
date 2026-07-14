@@ -211,3 +211,74 @@ body.dark-mode .search-box input{
     border-color:#444;
 
 }
+
+/* ===========================
+   DARK MODE TOGGLE
+=========================== */
+
+const darkToggle = document.getElementById(
+    "darkToggle"
+);
+
+if (darkToggle) {
+
+    darkToggle.addEventListener(
+        "click",
+        () => {
+
+            document.body.classList.toggle(
+                "dark-mode"
+            );
+
+            if (
+                document.body.classList.contains(
+                    "dark-mode"
+                )
+            ) {
+
+                localStorage.setItem(
+                    "theme",
+                    "dark"
+                );
+
+            } else {
+
+                localStorage.setItem(
+                    "theme",
+                    "light"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ===========================
+   MOBILE MENU
+=========================== */
+
+const menuToggle = document.getElementById(
+    "menuToggle"
+);
+
+const nav = document.querySelector(
+    ".main-nav"
+);
+
+if (menuToggle && nav) {
+
+    menuToggle.addEventListener(
+        "click",
+        () => {
+
+            nav.classList.toggle(
+                "show-menu"
+            );
+
+        }
+    );
+
+}
