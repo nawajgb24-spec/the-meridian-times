@@ -571,3 +571,89 @@ a{
     opacity:.9;
 
 }
+
+/* ===========================
+   BREAKING NEWS BAR
+=========================== */
+
+.breaking-news{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    background:#ffffff;
+
+    border-left:6px solid #c40000;
+
+    padding:18px 24px;
+
+    margin:30px 0;
+
+    border-radius:12px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+.breaking-label{
+
+    background:#c40000;
+
+    color:#fff;
+
+    padding:8px 14px;
+
+    border-radius:6px;
+
+    font-weight:700;
+
+    font-size:13px;
+
+    letter-spacing:1px;
+
+}
+
+.breaking-text{
+
+    font-size:15px;
+
+    color:#444;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    animation:newsTicker 18s linear infinite;
+
+}
+
+@keyframes newsTicker{
+
+    from{
+
+        transform:translateX(100%);
+
+    }
+
+    to{
+
+        transform:translateX(-100%);
+
+    }
+
+}
+
+body.dark-mode .breaking-news{
+
+    background:#1f1f1f;
+
+}
+
+body.dark-mode .breaking-text{
+
+    color:#ddd;
+
+}
